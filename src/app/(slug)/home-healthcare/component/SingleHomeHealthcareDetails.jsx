@@ -29,6 +29,13 @@ import {
 } from "lucide-react";
 import { FaAmbulance } from "react-icons/fa";
 import BookHomeHealthcareDialog from "./bookhomehealthcare";
+import HomeServicesList from "./HomeServicesList";
+import TwentyFourSevenCareList from "./TwentyFourSevenCareList";
+import PatientServicesList from "./PatientServicesList";
+import InsuranceServicesList from "./InsuranceServicesList";
+import ProfessionalsServicesList from "./ProfessionalsServicesList";
+import CareServicesList from "./CareServicesList";
+import PricingServicesList from "./PricingServicesList";
 
 const HomeHealthcareSingleView = ({
   homeHealthcareService,
@@ -39,11 +46,23 @@ const HomeHealthcareSingleView = ({
   
   const [activeTab, setActiveTab] = useState('overview');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showHomeServices, setShowHomeServices] = useState(false);
+  const [show24x7Care, setShow24x7Care] = useState(false);
+  const [showPatientServices, setShowPatientServices] = useState(false);
+  const [showInsuranceServices, setShowInsuranceServices] = useState(false);
+  const [showProfessionalsServices, setShowProfessionalsServices] = useState(false);
+  const [showCareServices, setShowCareServices] = useState(false);
+  const [showPricingServices, setShowPricingServices] = useState(false);
 
-  // Get reviews from service data (mock for now)
-  const reviews = [];
-  const avgRating = "4.8";
-  const totalReviews = 156;
+  // Get reviews from service data
+  const reviews = homeHealthcareService?.hospital?.reviews || [];
+  const totalReviews = reviews.length;
+  const avgRating = reviews.length > 0 
+    ? (reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / reviews.length).toFixed(1)
+    : "0.0";
+  
+  // Calculate total patients from bookings
+  const totalPatients = homeHealthcareService?._count?.BookHomeHealthcare || 0;
 
   const serviceImages = [
     homeHealthcareService?.hospital?.hspdetails?.hsplogo,
@@ -271,9 +290,9 @@ const HomeHealthcareSingleView = ({
                     <div className="grid grid-cols-2 gap-3 md:gap-4">
                       {[
                         { icon: <Home className="w-4 h-4 md:w-5 md:h-5" />, label: "At Home", value: "Service", color: "blue" },
-                        { icon: <Clock className="w-4 h-4 md:w-5 md:h-5" />, label: "Available", value: "24/7", color: "green" },
-                        { icon: <Award className="w-4 h-4 md:w-5 md:h-5" />, label: "Experience", value: homeHealthcareService?.hospital?.hspInfo?.experience ? `${homeHealthcareService.hospital.hspInfo.experience}+ yrs` : "5+ yrs", color: "purple" },
-                        { icon: <Users className="w-4 h-4 md:w-5 md:h-5" />, label: "Patients", value: "500+", color: "orange" },
+                      { icon: <Clock className="w-4 h-4 md:w-5 md:h-5" />, label: "Available", value: "24/7", color: "green" },
+                      { icon: <Award className="w-4 h-4 md:w-5 md:h-5" />, label: "Experience", value: homeHealthcareService?.hospital?.hspInfo?.experience ? `${homeHealthcareService.hospital.hspInfo.experience}+ yrs` : "5+ yrs", color: "purple" },
+                      { icon: <Users className="w-4 h-4 md:w-5 md:h-5" />, label: "Patients", value: totalPatients > 0 ? `${totalPatients}+` : "Available", color: "orange" },
                       ].map((stat, index) => (
                         <div key={index} className="bg-white p-3 md:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                           <div className="flex items-center gap-2 md:gap-3">
@@ -576,22 +595,43 @@ const HomeHealthcareSingleView = ({
                 <div className="p-4 sm:p-6 bg-gray-50">
                   <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
                     {[
-                      { icon: <Home className="w-5 h-5 text-blue-600" />, label: "Home Service", value: "Available" },
-                      { icon: <Clock className="w-5 h-5 text-green-600" />, label: "24/7 Care", value: "Always" },
+                      { icon: <Home className="w-5 h-5 text-blue-600" />, label: "Home Service", value: "Available", clickable: true, action: "home" },
+                      { icon: <Clock className="w-5 h-5 text-green-600" />, label: "24/7 Care", value: "Always", clickable: true, action: "24x7" },
                       { icon: <Award className="w-5 h-5 text-purple-600" />, label: "Experience", value: homeHealthcareService?.hospital?.hspInfo?.experience ? `${homeHealthcareService.hospital.hspInfo.experience}+ yrs` : "5+ yrs" },
-                      { icon: <Users className="w-5 h-5 text-blue-600" />, label: "Patients", value: "500+" },
+                      { icon: <Users className="w-5 h-5 text-blue-600" />, label: "Patients", value: totalPatients > 0 ? `${totalPatients}+` : "Available", clickable: true, action: "patients" },
                       { icon: <Activity className="w-5 h-5 text-red-600" />, label: "Monitoring", value: "Live" },
-                      { icon: <Shield className="w-5 h-5 text-indigo-600" />, label: "Insurance", value: "Accepted" },
+                      { icon: <Shield className="w-5 h-5 text-indigo-600" />, label: "Insurance", value: "Accepted", clickable: true, action: "insurance" },
                       { icon: <Phone className="w-5 h-5 text-orange-600" />, label: "Emergency", value: "24/7" },
-                      { icon: <Stethoscope className="w-5 h-5 text-cyan-600" />, label: "Professionals", value: "Qualified" },
-                      { icon: <Heart className="w-5 h-5 text-red-600" />, label: "Care", value: "Personal" },
-                      { icon: <IndianRupee className="w-5 h-5 text-green-600" />, label: "Starting", value: `₹${homeHealthcareService?.minPrice || "999"}` },
+                      { icon: <Stethoscope className="w-5 h-5 text-cyan-600" />, label: "Professionals", value: "Qualified", clickable: true, action: "professionals" },
+                      { icon: <Heart className="w-5 h-5 text-red-600" />, label: "Care", value: "Personal", clickable: true, action: "care" },
+                      { icon: <IndianRupee className="w-5 h-5 text-green-600" />, label: "Starting", value: `₹${homeHealthcareService?.minPrice || homeHealthcareService?.startingPrice || "999"}`, clickable: true, action: "pricing" },
                       { icon: <Star className="w-5 h-5 text-yellow-600" />, label: "Rating", value: `${avgRating} ★` },
                       { icon: <CheckCircle className="w-5 h-5 text-green-600" />, label: "Verified", value: "Provider" },
                     ].map((item, idx) => (
                       <div
                         key={idx}
-                        className="bg-white p-2 sm:p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center min-h-[85px] sm:min-h-[95px]"
+                        onClick={() => {
+                          if (item.clickable) {
+                            if (item.action === "home") {
+                              setShowHomeServices(true);
+                            } else if (item.action === "24x7") {
+                              setShow24x7Care(true);
+                            } else if (item.action === "patients") {
+                              setShowPatientServices(true);
+                            } else if (item.action === "insurance") {
+                              setShowInsuranceServices(true);
+                            } else if (item.action === "professionals") {
+                              setShowProfessionalsServices(true);
+                            } else if (item.action === "care") {
+                              setShowCareServices(true);
+                            } else if (item.action === "pricing") {
+                              setShowPricingServices(true);
+                            }
+                          }
+                        }}
+                        className={`bg-white p-2 sm:p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center min-h-[85px] sm:min-h-[95px] ${
+                          item.clickable ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50' : ''
+                        }`}
                       >
                         <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-50 mb-1.5 sm:mb-2">
                           {item.icon}
@@ -761,9 +801,9 @@ const HomeHealthcareSingleView = ({
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { icon: <Home className="w-4 h-4" />, label: "At Home", value: "Service" },
-                      { icon: <Clock className="w-4 h-4" />, label: "Available", value: "24/7" },
-                      { icon: <Award className="w-4 h-4" />, label: "Experience", value: homeHealthcareService?.hospital?.hspInfo?.experience ? `${homeHealthcareService.hospital.hspInfo.experience}+ yrs` : "5+ yrs" },
-                      { icon: <Users className="w-4 h-4" />, label: "Patients", value: "500+" },
+                        { icon: <Clock className="w-4 h-4" />, label: "Available", value: "24/7" },
+                        { icon: <Award className="w-4 h-4" />, label: "Experience", value: homeHealthcareService?.hospital?.hspInfo?.experience ? `${homeHealthcareService.hospital.hspInfo.experience}+ yrs` : "5+ yrs" },
+                        { icon: <Users className="w-4 h-4" />, label: "Patients", value: totalPatients > 0 ? `${totalPatients}+` : "Available" },
                     ].map((stat, index) => (
                       <div key={index} className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
@@ -919,19 +959,40 @@ const HomeHealthcareSingleView = ({
               <div className="p-3">
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { icon: <Home className="w-4 h-4 text-blue-600" />, label: "Home Service", value: "Available" },
-                    { icon: <Clock className="w-4 h-4 text-green-600" />, label: "24/7 Care", value: "Always" },
+                    { icon: <Home className="w-4 h-4 text-blue-600" />, label: "Home Service", value: "Available", clickable: true, action: "home" },
+                    { icon: <Clock className="w-4 h-4 text-green-600" />, label: "24/7 Care", value: "Always", clickable: true, action: "24x7" },
                     { icon: <Award className="w-4 h-4 text-purple-600" />, label: "Experience", value: homeHealthcareService?.hospital?.hspInfo?.experience ? `${homeHealthcareService.hospital.hspInfo.experience}+ yrs` : "5+ yrs" },
-                    { icon: <Users className="w-4 h-4 text-blue-600" />, label: "Patients", value: "500+" },
+                    { icon: <Users className="w-4 h-4 text-blue-600" />, label: "Patients", value: totalPatients > 0 ? `${totalPatients}+` : "Available", clickable: true, action: "patients" },
                     { icon: <Activity className="w-4 h-4 text-red-600" />, label: "Monitoring", value: "Live" },
-                    { icon: <Shield className="w-4 h-4 text-indigo-600" />, label: "Insurance", value: "Accepted" },
+                    { icon: <Shield className="w-4 h-4 text-indigo-600" />, label: "Insurance", value: "Accepted", clickable: true, action: "insurance" },
                     { icon: <Phone className="w-4 h-4 text-orange-600" />, label: "Emergency", value: "24/7" },
-                    { icon: <Stethoscope className="w-4 h-4 text-cyan-600" />, label: "Qualified", value: "Staff" },
+                    { icon: <Stethoscope className="w-4 h-4 text-cyan-600" />, label: "Professionals", value: "Qualified", clickable: true, action: "professionals" },
                     { icon: <Star className="w-4 h-4 text-yellow-600" />, label: "Rating", value: `${avgRating} ★` },
                   ].map((item, idx) => (
                     <div
                       key={idx}
-                      className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm text-center min-h-[70px] flex flex-col justify-center items-center"
+                      onClick={() => {
+                        if (item.clickable) {
+                          if (item.action === "home") {
+                            setShowHomeServices(true);
+                          } else if (item.action === "24x7") {
+                            setShow24x7Care(true);
+                          } else if (item.action === "patients") {
+                            setShowPatientServices(true);
+                          } else if (item.action === "insurance") {
+                            setShowInsuranceServices(true);
+                          } else if (item.action === "professionals") {
+                            setShowProfessionalsServices(true);
+                          } else if (item.action === "care") {
+                            setShowCareServices(true);
+                          } else if (item.action === "pricing") {
+                            setShowPricingServices(true);
+                          }
+                        }
+                      }}
+                      className={`bg-white p-2 rounded-lg border border-gray-200 shadow-sm text-center min-h-[70px] flex flex-col justify-center items-center ${
+                        item.clickable ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50 active:bg-blue-100' : ''
+                      }`}
                     >
                       <div className="mb-1">{item.icon}</div>
                       <h3 className="font-bold text-gray-900 text-xs leading-tight line-clamp-2 mb-0.5">{item.label}</h3>
@@ -975,6 +1036,70 @@ const HomeHealthcareSingleView = ({
           </Card>
         </div>
       </div>
+      
+      {/* Home Services List Modal */}
+      {showHomeServices && (
+        <HomeServicesList
+          onClose={() => setShowHomeServices(false)}
+          homeHealthcareService={homeHealthcareService}
+          serviceName={serviceName}
+        />
+      )}
+      
+      {/* 24/7 Care Services Modal */}
+      {show24x7Care && (
+        <TwentyFourSevenCareList
+          onClose={() => setShow24x7Care(false)}
+          homeHealthcareService={homeHealthcareService}
+          serviceName={serviceName}
+        />
+      )}
+      
+      {/* Patient Services Modal */}
+      {showPatientServices && (
+        <PatientServicesList
+          onClose={() => setShowPatientServices(false)}
+          homeHealthcareService={homeHealthcareService}
+          serviceName={serviceName}
+        />
+      )}
+      
+      {/* Insurance Services Modal */}
+      {showInsuranceServices && (
+        <InsuranceServicesList
+          onClose={() => setShowInsuranceServices(false)}
+          homeHealthcareService={homeHealthcareService}
+          serviceName={serviceName}
+        />
+      )}
+      
+      {/* Professionals Services Modal */}
+      {showProfessionalsServices && (
+        <ProfessionalsServicesList
+          onClose={() => setShowProfessionalsServices(false)}
+          homeHealthcareService={homeHealthcareService}
+          serviceName={serviceName}
+        />
+      )}
+      
+      {/* Care Services Modal */}
+      {showCareServices && (
+        <CareServicesList
+          onClose={() => setShowCareServices(false)}
+          homeHealthcareService={homeHealthcareService}
+          serviceName={serviceName}
+        />
+      )}
+      
+      {/* Pricing Services Modal */}
+      {showPricingServices && (
+        <PricingServicesList
+          onClose={() => setShowPricingServices(false)}
+          homeHealthcareService={homeHealthcareService}
+          serviceName={serviceName}
+        />
+      )}
+      
       <BookHomeHealthcareDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}

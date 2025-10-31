@@ -1,31 +1,40 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowDown, Briefcase, Filter, GraduationCap } from "lucide-react";
+import { ArrowDown, Briefcase, Filter, GraduationCap, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 const HomeHealthcare = ({ doctordetails, specilitytype }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState(doctordetails);
   const [showFilters, setShowFilters] = useState(false);
+  const [homeHealthcareServices, setHomeHealthcareServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const HomeHealthcare = [
-    { name: "ICU at Home", type: "Care" },
-    { name: "General Nursing", type: "Care" },
-    { name: "Neurological Rehabilitation", type: "Care" },
-    { name: "On Bed Cancer", type: "Care" },
-    { name: "Transplant & Post-op", type: "Care" },
-    { name: "Pregnancy", type: "Care" },
-    { name: "Mother & Child", type: "Care" },
-    { name: "Palliative", type: "Care" },
-    { name: "Orthopedic", type: "Care" },
-    { name: "Stroke", type: "Care" },
-    { name: "Cardiac", type: "Care" },
-    { name: "Dialysis", type: "Care" },
-    { name: "Old Age Health", type: "Care" },
-    { name: "COPD", type: "Care" },
-    { name: "Bed Sores", type: "Care" },
-  ];
+  // Fetch home healthcare service types from API
+  useEffect(() => {
+    const fetchServiceTypes = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/home-healthcare/service-types");
+        const result = await response.json();
+
+        if (result.success) {
+          setHomeHealthcareServices(result.data || []);
+        } else {
+          setError("Failed to load service types");
+        }
+      } catch (err) {
+        console.error("Error fetching service types:", err);
+        setError("Failed to load service types");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServiceTypes();
+  }, []);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -314,16 +323,26 @@ const HomeHealthcare = ({ doctordetails, specilitytype }) => {
           <div className="w-full md:w-3/5 overflow-auto lg:w-4/5">
             {/* Grid Layout for Cards */}
 
-            {/* If no doctors are found */}
-            {HomeHealthcare.length === 0 ? (
-              <div className="flex justify-center  rounded-xl">
+            {/* Loading State */}
+            {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="w-12 h-12 text-[#5271FF] animate-spin" />
+              </div>
+            ) : error ? (
+              <div className="flex justify-center rounded-xl">
+                <p className="text-red-600 p-4 border-red-600 border rounded-xl font-bold text-center text-lg">
+                  {error}
+                </p>
+              </div>
+            ) : homeHealthcareServices.length === 0 ? (
+              <div className="flex justify-center rounded-xl">
                 <p className="text-[hsl(229,100%,66%)] p-4 border-[#243460] border rounded-xl font-bold text-center text-lg">
-                  No Home Healthcare Center found for this selected category
+                  No Home Healthcare Services found for this selected category
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-5 md:mt-0">
-                {HomeHealthcare.map((item, index) => (
+                {homeHealthcareServices.map((item, index) => (
                   <Link
                     key={index}
                     href={{

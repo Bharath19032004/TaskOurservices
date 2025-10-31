@@ -40,6 +40,12 @@ const SingleHomeHealthcareDetailsPage = async ({ params }) => {
             hspdetails: true,
             hspcontact: true,
             hspbranches: true,
+            reviews: true,
+          },
+        },
+        _count: {
+          select: {
+            BookHomeHealthcare: true,
           },
         },
       },
