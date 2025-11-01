@@ -667,7 +667,7 @@ const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) 
                  <div className="p-4 sm:p-6 bg-gray-50">
                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
                      {[
-                       { icon: <Shield className="w-5 h-5 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes", clickable: true, action: "coverage" },
+                       { icon: <Shield className="w-5 h-5 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes", action: "coverage" },
                        { icon: <DollarSign className="w-5 h-5 text-green-600" />, label: "Cashless", value: "Available" },
                        { icon: <Building2 className="w-5 h-5 text-purple-600" />, label: "Network", value: "Pan India" },
                        { icon: <Heart className="w-5 h-5 text-red-600" />, label: "Health Check", value: "Free" },
@@ -1176,7 +1176,7 @@ const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) 
               <div className="p-3">
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { icon: <Shield className="w-4 h-4 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes", clickable: true, action: "coverage" },
+                    { icon: <Shield className="w-4 h-4 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes", action: "coverage" },
                     { icon: <DollarSign className="w-4 h-4 text-green-600" />, label: "Cashless", value: "Available" },
                     { icon: <Building2 className="w-4 h-4 text-purple-600" />, label: "Network", value: "Pan India" },
                     { icon: <Heart className="w-4 h-4 text-red-600" />, label: "Health Check", value: "Free" },

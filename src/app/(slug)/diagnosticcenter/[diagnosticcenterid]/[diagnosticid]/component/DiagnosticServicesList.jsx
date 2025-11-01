@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import {
   X,
   Stethoscope,
   Award,
+  AlertCircle,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -36,6 +38,15 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
     return matchesSearch && matchesCategory;
   });
 
+  // Unified Theme
+  const unified = {
+    headerGradient: "from-[#1E3B90] to-[#3D85EF]",
+    cardHeaderGradient: "from-[#1E3B90]/10 to-[#3D85EF]/10",
+    accentText: "text-[#1E3B90]",
+    buttonGradient: "from-[#1E3B90] to-[#3D85EF]",
+    lightBg: "bg-[#EEF3FF]",
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -43,12 +54,12 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
         hideCloseButton
       >
         {/* Header */}
-        <DialogHeader className="px-6 pt-6 pb-5 border-b bg-gradient-to-r from-indigo-700 via-blue-600 to-cyan-500 text-white shadow-lg">
+        <DialogHeader className={`px-6 pt-6 pb-5 border-b bg-gradient-to-r ${unified.headerGradient} text-white shadow-lg`}>
           <DialogTitle className="text-2xl font-bold flex items-center gap-3 drop-shadow-sm">
             <Shield className="w-7 h-7 text-white drop-shadow-md" />
             Diagnostic Services
           </DialogTitle>
-          <DialogDescription className="text-blue-100 text-sm font-medium">
+          <DialogDescription className="text-white/90 text-sm font-medium">
             Explore our advanced facilities, equipment, and transparent pricing
           </DialogDescription>
         </DialogHeader>
@@ -62,7 +73,7 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
               placeholder="Search by name or category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl"
+              className="pl-10 pr-10 py-2 w-full border-gray-300 focus:border-[#1E3B90] focus:ring-[#1E3B90] rounded-xl"
             />
             {searchTerm && (
               <button
@@ -82,7 +93,7 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                     selectedCategory === category
-                      ? "bg-indigo-600 text-white shadow-md"
+                      ? "bg-gradient-to-r from-[#1E3B90] to-[#3D85EF] text-white shadow-md"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
@@ -103,21 +114,21 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
                   className="group transition-all duration-300 shadow-md hover:shadow-2xl rounded-2xl overflow-hidden border border-gray-200 bg-white"
                 >
                   {/* Card Header */}
-                  <div className="bg-gradient-to-r from-indigo-600 to-blue-600 p-4 flex justify-between items-center">
+                  <div className={`bg-gradient-to-r ${unified.cardHeaderGradient} p-4 flex justify-between items-center`}>
                     <div className="flex items-center gap-3">
-                      <div className="bg-white/20 p-2 rounded-lg">
-                        <Stethoscope className="w-5 h-5 text-white" />
+                      <div className="bg-white/30 p-2 rounded-lg">
+                        <Stethoscope className="w-5 h-5 text-[#1E3B90]" />
                       </div>
                       <div>
-                        <h4 className="text-white font-bold text-lg">{service.facility}</h4>
+                        <h4 className="font-bold text-gray-800 text-lg">{service.facility}</h4>
                         <div className="flex flex-wrap gap-2 mt-1">
                           {service.category && (
-                            <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                            <Badge className="bg-white/30 text-[#1E3B90] border border-[#E1E8FF] text-xs">
                               {service.category}
                             </Badge>
                           )}
                           {service.subCategory && (
-                            <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                            <Badge className="bg-white/30 text-[#1E3B90] border border-[#E1E8FF] text-xs">
                               {service.subCategory}
                             </Badge>
                           )}
@@ -149,10 +160,10 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
                       {/* Left Info */}
                       <div className="flex-1 space-y-4">
                         {service.machinemodel && (
-                          <div className="border border-indigo-100 bg-indigo-50 rounded-xl p-4 shadow-sm hover:shadow-md transition">
+                          <div className={`border border-[#E1E8FF] ${unified.lightBg} rounded-xl p-4 shadow-sm hover:shadow-md transition`}>
                             <div className="flex items-center gap-2 mb-1">
-                              <Award className="w-4 h-4 text-indigo-700" />
-                              <p className="text-xs font-medium text-indigo-800">
+                              <Award className={`w-4 h-4 ${unified.accentText}`} />
+                              <p className="text-xs font-medium text-gray-700">
                                 Equipment / Machine Model
                               </p>
                             </div>
@@ -166,32 +177,32 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
                       </div>
 
                       {/* Right Pricing */}
-                      <div className="lg:w-80 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4 shadow-inner hover:shadow-md transition">
-                        <h5 className="text-center font-bold text-blue-900 mb-3 tracking-wide">
+                      <div className={`lg:w-80 bg-gradient-to-br from-[#EEF3FF] to-[#E1E8FF] border border-[#E1E8FF] rounded-xl p-4 shadow-inner hover:shadow-md transition`}>
+                        <h5 className={`text-center font-bold ${unified.accentText} mb-3 tracking-wide`}>
                           Pricing Details
                         </h5>
 
                         <div className="grid grid-cols-2 gap-3 mb-3">
-                          <div className="bg-white rounded-xl p-3 border border-blue-100 text-center shadow-sm">
-                            <p className="text-xs text-blue-600 font-medium flex items-center justify-center gap-1 mb-1">
+                          <div className="bg-white rounded-xl p-3 border border-[#E1E8FF] text-center shadow-sm">
+                            <p className="text-xs text-gray-600 font-medium flex items-center justify-center gap-1 mb-1">
                               <IndianRupee className="w-3 h-3" /> Min
                             </p>
-                            <p className="text-lg font-bold text-blue-900">
+                            <p className={`text-lg font-bold ${unified.accentText}`}>
                               ₹{service.minPrice || "--"}
                             </p>
                           </div>
-                          <div className="bg-white rounded-xl p-3 border border-cyan-100 text-center shadow-sm">
-                            <p className="text-xs text-cyan-600 font-medium flex items-center justify-center gap-1 mb-1">
+                          <div className="bg-white rounded-xl p-3 border border-[#E1E8FF] text-center shadow-sm">
+                            <p className="text-xs text-gray-600 font-medium flex items-center justify-center gap-1 mb-1">
                               <IndianRupee className="w-3 h-3" /> Max
                             </p>
-                            <p className="text-lg font-bold text-cyan-900">
+                            <p className={`text-lg font-bold ${unified.accentText}`}>
                               ₹{service.maxPrice || "--"}
                             </p>
                           </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-3 text-white text-center shadow-md">
-                          <p className="text-xs font-medium text-green-100 mb-1">Final Price</p>
+                        <div className={`bg-gradient-to-r ${unified.buttonGradient} rounded-xl p-3 text-white text-center shadow-md`}>
+                          <p className="text-xs font-medium text-white/90 mb-1">Final Price</p>
                           <p className="text-xl font-bold">
                             {service.finalPrice ? `₹${service.finalPrice}` : "Contact"}
                           </p>
@@ -211,7 +222,7 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
             </div>
           ) : (
             <div className="text-center py-16 text-gray-600">
-              <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <AlertCircle className="w-12 h-12 text-[#1E3B90] mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">No Services Found</h3>
               <p className="text-sm text-gray-500">
                 Try adjusting filters or search keywords.
@@ -222,7 +233,7 @@ const DiagnosticServicesList = ({ open, onOpenChange, diagnosticServices = [] })
 
         {/* Footer */}
         <div className="px-6 py-4 border-t bg-white text-center text-sm text-gray-600">
-          <Shield className="inline-block w-4 h-4 text-blue-600 mr-2" />
+          <Shield className="inline-block w-4 h-4 text-[#1E3B90] mr-2" />
           For booking or inquiries, please contact the diagnostic center directly.
         </div>
       </DialogContent>
