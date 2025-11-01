@@ -766,20 +766,20 @@ const PathologySinglePageClient = ({ hospital, service, serviceType = 'labtest',
                  <div className="p-4 sm:p-6 bg-gray-50">
                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
                      {[
-                       { icon: <TestTube className="w-5 h-5 text-green-600" />, label: "Lab Tests", value: "500+", clickable: true, action: "labTests" },
+                       { icon: <TestTube className="w-5 h-5 text-green-600" />, label: "Lab Tests", value: "500+",  action: "labTests" },
                        { icon: <Award className="w-5 h-5 text-purple-600" />, label: "NABL Certified", value: "Certified" },
                        { icon: <Clock className="w-5 h-5 text-orange-600" />, label: "Service Hours", value: "24/7" },
                        { icon: <Shield className="w-5 h-5 text-indigo-600" />, label: "Quality Assured", value: "100%" },
                        { icon: <Users className="w-5 h-5 text-cyan-600" />, label: "Experience", value: hospital?.hspInfo?.experience ? `${hospital.hspInfo.experience}+ Years` : "10+" },
-                       { icon: <Heart className="w-5 h-5 text-red-600" />, label: "Home Collection", value: "Available", clickable: true, action: "homeCollection" },
-                       { icon: <Video className="w-5 h-5 text-blue-600" />, label: "Online Reports", value: "Available", clickable: true, action: "onlineReports" },
-                       { icon: <CreditCard className="w-5 h-5 text-orange-600" />, label: "Cashless", value: "Available", clickable: true, action: "cashless" },
-                       { icon: <FileText className="w-5 h-5 text-blue-600" />, label: "Govt Schemes", value: "Available", clickable: true, action: "govtSchemes" },
+                       { icon: <Heart className="w-5 h-5 text-red-600" />, label: "Home Collection", value: "Available",  action: "homeCollection" },
+                       { icon: <Video className="w-5 h-5 text-blue-600" />, label: "Online Reports", value: "Available",  action: "onlineReports" },
+                       { icon: <CreditCard className="w-5 h-5 text-orange-600" />, label: "Cashless", value: "Available",  action: "cashless" },
+                       { icon: <FileText className="w-5 h-5 text-blue-600" />, label: "Govt Schemes", value: "Available",  action: "govtSchemes" },
                        ...(hospital?.hspdetails?.nabhnablapproved === "Yes"
                          ? [{ icon: <Award className="w-5 h-5 text-green-600" />, label: "NABL Level", value: hospital.hspdetails.nabhnabllevel }]
                          : []),
                        { icon: <Star className="w-5 h-5 text-yellow-600" />, label: "Rating", value: `${avgRating} ★` },
-                       { icon: <Building2 className="w-5 h-5 text-purple-600" />, label: "Branches", value: hospital?.hspbranches?.length || "1+", clickable: true, action: "branches" },
+                       { icon: <Building2 className="w-5 h-5 text-purple-600" />, label: "Branches", value: hospital?.hspbranches?.length || "1+",  action: "branches" },
                      ].map((item, idx) => (
                        <div
                          key={idx}
@@ -1351,20 +1351,20 @@ const PathologySinglePageClient = ({ hospital, service, serviceType = 'labtest',
               <div className="p-3">
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { icon: <TestTube className="w-4 h-4 text-green-600" />, label: "Lab Tests", value: "500+", clickable: true, action: "labTests" },
+                    { icon: <TestTube className="w-4 h-4 text-green-600" />, label: "Lab Tests", value: "500+",  action: "labTests" },
                     { icon: <Award className="w-4 h-4 text-purple-600" />, label: "NABL", value: "Certified" },
                     { icon: <Clock className="w-4 h-4 text-orange-600" />, label: "Service", value: "24/7" },
                     { icon: <Shield className="w-4 h-4 text-indigo-600" />, label: "Quality", value: "100%" },
                     { icon: <Users className="w-4 h-4 text-cyan-600" />, label: "Experience", value: hospital?.hspInfo?.experience ? `${hospital.hspInfo.experience}+` : "10+" },
-                    { icon: <Heart className="w-4 h-4 text-red-600" />, label: "Home", value: "Available", clickable: true, action: "homeCollection" },
-                    { icon: <Video className="w-4 h-4 text-blue-600" />, label: "Reports", value: "Online", clickable: true, action: "onlineReports" },
-                    { icon: <CreditCard className="w-4 h-4 text-orange-600" />, label: "Cashless", value: "Yes", clickable: true, action: "cashless" },
-                    { icon: <FileText className="w-4 h-4 text-blue-600" />, label: "Govt", value: "Schemes", clickable: true, action: "govtSchemes" },
+                    { icon: <Heart className="w-4 h-4 text-red-600" />, label: "Home", value: "Available",  action: "homeCollection" },
+                    { icon: <Video className="w-4 h-4 text-blue-600" />, label: "Reports", value: "Online",  action: "onlineReports" },
+                    { icon: <CreditCard className="w-4 h-4 text-orange-600" />, label: "Cashless", value: "Yes",  action: "cashless" },
+                    { icon: <FileText className="w-4 h-4 text-blue-600" />, label: "Govt", value: "Schemes",  action: "govtSchemes" },
                     ...(hospital?.hspdetails?.nabhnablapproved === "Yes"
                       ? [{ icon: <Award className="w-4 h-4 text-green-600" />, label: "NABL", value: hospital.hspdetails.nabhnabllevel }]
                       : []),
                     { icon: <Star className="w-4 h-4 text-yellow-600" />, label: "Rating", value: `${avgRating} ★` },
-                    { icon: <Building2 className="w-4 h-4 text-purple-600" />, label: "Branches", value: hospital?.hspbranches?.length || "1+", clickable: true, action: "branches" },
+                    { icon: <Building2 className="w-4 h-4 text-purple-600" />, label: "Branches", value: hospital?.hspbranches?.length || "1+",  action: "branches" },
                   ].map((item, idx) => (
                     <div
                       key={idx}

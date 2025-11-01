@@ -28,21 +28,29 @@ import {
   Home,
   Sparkles,
   ArrowUpDown,
+  AlertCircle,
 } from "lucide-react";
 
 const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) => {
   const router = useRouter();
-  const [selectedService, setSelectedService] = useState(null);
   const [pricingServices, setPricingServices] = useState([]);
   const [groupedServices, setGroupedServices] = useState([]);
   const [servicesByPriceRange, setServicesByPriceRange] = useState({});
   const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState("all"); // 'all', 'budget', 'moderate', 'premium', 'grouped'
-  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
+  const [viewMode, setViewMode] = useState("all");
+  const [sortOrder, setSortOrder] = useState("asc");
 
-  // Fetch pricing services from API
+  // Unified Theme (Same as all previous components)
+  const unified = {
+    headerGradient: "from-[#1E3B90] to-[#3D85EF]",
+    cardHeaderGradient: "from-[#1E3B90]/10 to-[#3D85EF]/10",
+    accentText: "text-[#1E3B90]",
+    buttonGradient: "from-[#1E3B90] to-[#3D85EF]",
+    lightBg: "bg-[#EEF3FF]",
+  };
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -69,74 +77,33 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
     fetchServices();
   }, []);
 
-  const colorClasses = {
-    green: {
-      bg: "bg-green-50",
-      border: "border-green-200",
-      text: "text-green-600",
-      hover: "hover:bg-green-100",
-      gradient: "from-green-50 to-green-100",
-    },
-    blue: {
-      bg: "bg-blue-50",
-      border: "border-blue-200",
-      text: "text-blue-600",
-      hover: "hover:bg-blue-100",
-      gradient: "from-blue-50 to-blue-100",
-    },
-    purple: {
-      bg: "bg-purple-50",
-      border: "border-purple-200",
-      text: "text-purple-600",
-      hover: "hover:bg-purple-100",
-      gradient: "from-purple-50 to-purple-100",
-    },
-    orange: {
-      bg: "bg-orange-50",
-      border: "border-orange-200",
-      text: "text-orange-600",
-      hover: "hover:bg-orange-100",
-      gradient: "from-orange-50 to-orange-100",
-    },
-    teal: {
-      bg: "bg-teal-50",
-      border: "border-teal-200",
-      text: "text-teal-600",
-      hover: "hover:bg-teal-100",
-      gradient: "from-teal-50 to-teal-100",
-    },
-  };
-
-  const getServiceColor = (index) => {
-    const colors = ["green", "blue", "purple", "orange", "teal"];
-    return colors[index % colors.length];
-  };
-
-  const getAffordabilityColor = (affordability) => {
-    if (affordability === "budget") return "green";
-    if (affordability === "moderate") return "blue";
-    return "purple";
-  };
-
   const getCurrentViewServices = () => {
     if (viewMode === "grouped") return groupedServices;
     if (viewMode === "budget") return servicesByPriceRange.budget || [];
     if (viewMode === "moderate") return servicesByPriceRange.moderate || [];
     if (viewMode === "premium") return servicesByPriceRange.premium || [];
     
-    // For 'all' mode, apply sorting
     const services = [...pricingServices];
     return sortOrder === "asc" 
       ? services.sort((a, b) => a.priceValue - b.priceValue)
       : services.sort((a, b) => b.priceValue - a.priceValue);
   };
 
+  const getAffordabilityLabel = (mode) => {
+    if (mode === "budget") return "Budget (Under ₹1000)";
+    if (mode === "moderate") return "Moderate (₹1000-2000)";
+    if (mode === "premium") return "Premium (Above ₹2000)";
+    return "All Services";
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 overflow-y-auto">
       <div className="min-h-screen py-6 px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-t-xl shadow-lg p-6 sticky top-0 z-10">
+          {/* Top Header */}
+          <div
+            className={`bg-gradient-to-r ${unified.headerGradient} rounded-t-xl shadow-lg p-6 sticky top-0 z-10`}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <button
@@ -165,56 +132,21 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
 
             {/* View Mode Toggle */}
             <div className="mt-4 flex flex-wrap gap-2">
-              <button
-                onClick={() => setViewMode("all")}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  viewMode === "all"
-                    ? "bg-white text-green-600"
-                    : "bg-white/20 text-white hover:bg-white/30"
-                }`}
-              >
-                All Services
-              </button>
-              <button
-                onClick={() => setViewMode("budget")}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  viewMode === "budget"
-                    ? "bg-white text-green-600"
-                    : "bg-white/20 text-white hover:bg-white/30"
-                }`}
-              >
-                Budget (Under ₹1000)
-              </button>
-              <button
-                onClick={() => setViewMode("moderate")}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  viewMode === "moderate"
-                    ? "bg-white text-green-600"
-                    : "bg-white/20 text-white hover:bg-white/30"
-                }`}
-              >
-                Moderate (₹1000-2000)
-              </button>
-              <button
-                onClick={() => setViewMode("premium")}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  viewMode === "premium"
-                    ? "bg-white text-green-600"
-                    : "bg-white/20 text-white hover:bg-white/30"
-                }`}
-              >
-                Premium (Above ₹2000)
-              </button>
-              <button
-                onClick={() => setViewMode("grouped")}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  viewMode === "grouped"
-                    ? "bg-white text-green-600"
-                    : "bg-white/20 text-white hover:bg-white/30"
-                }`}
-              >
-                By Service Type
-              </button>
+              {["all", "budget", "moderate", "premium", "grouped"].map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                    viewMode === mode
+                      ? "bg-white text-[#1E3B90]"
+                      : "bg-white/20 text-white hover:bg-white/30"
+                  }`}
+                >
+                  {mode === "all" ? "All Services" :
+                   mode === "grouped" ? "By Service Type" :
+                   getAffordabilityLabel(mode)}
+                </button>
+              ))}
               {viewMode === "all" && (
                 <button
                   onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
@@ -227,42 +159,42 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
             </div>
           </div>
 
-          {/* Services Content */}
+          {/* Content */}
           <div className="bg-gray-50 rounded-b-xl shadow-lg p-6">
             {/* Statistics Banner */}
             {statistics && !loading && (
               <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="border-2 border-green-200 hover:shadow-lg transition-all">
+                <Card className="border border-gray-200 hover:shadow-lg transition-all">
                   <CardContent className="p-4 text-center">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <IndianRupee className="w-6 h-6 text-green-600" />
+                    <div className="w-12 h-12 bg-[#EEF3FF] rounded-full flex items-center justify-center mx-auto mb-2">
+                      <IndianRupee className="w-6 h-6 text-[#1E3B90]" />
                     </div>
                     <h4 className="font-bold text-gray-900 text-2xl mb-1">₹{statistics.lowestPrice}</h4>
                     <p className="text-xs text-gray-600">Lowest Starting Price</p>
                   </CardContent>
                 </Card>
-                <Card className="border-2 border-blue-200 hover:shadow-lg transition-all">
+                <Card className="border border-gray-200 hover:shadow-lg transition-all">
                   <CardContent className="p-4 text-center">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <DollarSign className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 bg-[#EEF3FF] rounded-full flex items-center justify-center mx-auto mb-2">
+                      <DollarSign className="w-6 h-6 text-[#1E3B90]" />
                     </div>
                     <h4 className="font-bold text-gray-900 text-2xl mb-1">₹{statistics.averagePrice}</h4>
                     <p className="text-xs text-gray-600">Average Price</p>
                   </CardContent>
                 </Card>
-                <Card className="border-2 border-orange-200 hover:shadow-lg transition-all">
+                <Card className="border border-gray-200 hover:shadow-lg transition-all">
                   <CardContent className="p-4 text-center">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Tag className="w-6 h-6 text-orange-600" />
+                    <div className="w-12 h-12 bg-[#EEF3FF] rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Tag className="w-6 h-6 text-[#1E3B90]" />
                     </div>
                     <h4 className="font-bold text-gray-900 text-2xl mb-1">{statistics.servicesWithDiscount}</h4>
                     <p className="text-xs text-gray-600">Discounted Services</p>
                   </CardContent>
                 </Card>
-                <Card className="border-2 border-teal-200 hover:shadow-lg transition-all">
+                <Card className="border border-gray-200 hover:shadow-lg transition-all">
                   <CardContent className="p-4 text-center">
-                    <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Stethoscope className="w-6 h-6 text-teal-600" />
+                    <div className="w-12 h-12 bg-[#EEF3FF] rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Stethoscope className="w-6 h-6 text-[#1E3B90]" />
                     </div>
                     <h4 className="font-bold text-gray-900 text-2xl mb-1">{statistics.totalServices}</h4>
                     <p className="text-xs text-gray-600">Total Services</p>
@@ -273,11 +205,11 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
 
             {/* Price Range Info */}
             {statistics && !loading && viewMode === "all" && (
-              <div className="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4">
+              <div className="mb-6 bg-gradient-to-r from-[#EEF3FF] to-[#E1E8FF] border border-gray-200 rounded-xl p-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <TrendingDown className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 bg-[#EEF3FF] rounded-full flex items-center justify-center">
+                      <TrendingDown className="w-5 h-5 text-[#1E3B90]" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-600">Budget Services</p>
@@ -285,8 +217,8 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Wallet className="w-5 h-5 text-blue-600" />
+                    <div className="w-10 h-10 bg-[#EEF3FF] rounded-full flex items-center justify-center">
+                      <Wallet className="w-5 h-5 text-[#1E3B90]" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-600">Moderate Services</p>
@@ -294,8 +226,8 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-purple-600" />
+                    <div className="w-10 h-10 bg-[#EEF3FF] rounded-full flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-[#1E3B90]" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-600">Premium Services</p>
@@ -309,7 +241,7 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
             {/* Loading State */}
             {loading && (
               <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 className="w-12 h-12 text-green-600 animate-spin mb-4" />
+                <Loader2 className="w-12 h-12 text-[#1E3B90] animate-spin mb-4" />
                 <p className="text-gray-600 text-lg">Loading pricing information...</p>
               </div>
             )}
@@ -317,11 +249,11 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
             {/* Error State */}
             {error && !loading && (
               <div className="flex flex-col items-center justify-center py-20">
-                <X className="w-12 h-12 text-red-600 mb-4" />
-                <p className="text-red-600 text-lg mb-4">{error}</p>
+                <AlertCircle className="w-12 h-12 text-[#1E3B90] mb-4" />
+                <p className="text-[#1E3B90] text-lg mb-4">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
+                  className="px-6 py-2 bg-gradient-to-r from-[#1E3B90] to-[#3D85EF] text-white rounded-lg hover:opacity-90 transition-all"
                 >
                   Retry
                 </button>
@@ -338,101 +270,105 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
 
             {/* Grouped Services View */}
             {!loading && !error && viewMode === "grouped" && groupedServices.length > 0 && (
-              <div>
+              <>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
                   Services Grouped by Type - Sorted by Price ({groupedServices.length})
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {groupedServices.map((service, index) => {
-                    const color = getServiceColor(index);
-                    const colors = colorClasses[color];
-                    return (
-                      <Card
-                        key={index}
-                        className={`border-2 ${colors.border} ${colors.hover} transition-all hover:shadow-xl cursor-pointer`}
-                        onClick={() => router.push(`/home-healthcare/${encodeURIComponent(service.serviceName)}`)}
+                  {groupedServices.map((service, index) => (
+                    <Card
+                      key={index}
+                      className="border border-gray-200 hover:shadow-xl transition-all cursor-pointer"
+                      onClick={() =>
+                        router.push(`/home-healthcare/${encodeURIComponent(service.serviceName)}`)
+                      }
+                    >
+                      {/* Card Header */}
+                      <div
+                        className={`bg-gradient-to-r ${unified.cardHeaderGradient} p-4 rounded-t-xl flex items-center justify-between`}
                       >
-                        <CardContent className="p-5">
-                          <div className="flex items-start gap-3 mb-4">
-                            <div className={`p-3 rounded-xl ${colors.bg} ${colors.text} flex-shrink-0`}>
-                              <Stethoscope className="w-6 h-6" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-lg font-bold text-gray-900 mb-1">
-                                {service.serviceName}
-                              </h3>
-                              <Badge className="bg-green-100 text-green-700 text-xs">
-                                <IndianRupee className="w-3 h-3 mr-1" />
-                                Starting ₹{service.minPrice}
-                              </Badge>
-                            </div>
+                        <div className="flex items-center gap-3">
+                          <div className="p-3 bg-white/30 rounded-xl">
+                            <Stethoscope className="w-6 h-6 text-[#1E3B90]" />
                           </div>
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-800">{service.serviceName}</h3>
+                            <p className={`${unified.accentText} text-sm font-semibold mt-1`}>
+                              {service.totalProviders} providers
+                            </p>
+                          </div>
+                        </div>
+                        <Badge className="bg-white/30 text-[#1E3B90] text-xs">
+                          <IndianRupee className="w-3 h-3 mr-1" />
+                          ₹{service.minPrice}
+                        </Badge>
+                      </div>
 
-                          {/* Price Stats */}
-                          <div className="flex items-center gap-3 mb-4 text-xs text-gray-600">
+                      <CardContent className="p-5 bg-white rounded-b-xl">
+                        <div className="flex items-center gap-3 mb-4 text-xs text-gray-600">
+                          <div className="flex items-center gap-1">
+                            <TrendingDown className="w-3.5 h-3.5" />
+                            <span>Min: ₹{service.minPrice}</span>
+                          </div>
+                          {service.averagePrice && (
                             <div className="flex items-center gap-1">
-                              <TrendingDown className="w-3.5 h-3.5" />
-                              <span>Min: ₹{service.minPrice}</span>
-                            </div>
-                            {service.averagePrice && (
-                              <div className="flex items-center gap-1">
-                                <DollarSign className="w-3.5 h-3.5" />
-                                <span>Avg: ₹{service.averagePrice}</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Provider Count */}
-                          <div className="flex items-center gap-1 mb-4 text-xs text-gray-600">
-                            <Users className="w-3.5 h-3.5" />
-                            <span>{service.totalProviders} Provider{service.totalProviders > 1 ? "s" : ""} Available</span>
-                          </div>
-
-                          {/* Locations */}
-                          {service.availableIn && service.availableIn.length > 0 && (
-                            <div className="flex items-center gap-1 mb-4 text-xs text-gray-600">
-                              <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                              <span className="truncate">
-                                Available in {service.availableIn.slice(0, 2).join(", ")}
-                                {service.availableIn.length > 2 && ` +${service.availableIn.length - 2} more`}
-                              </span>
+                              <DollarSign className="w-3.5 h-3.5" />
+                              <span>Avg: ₹{service.averagePrice}</span>
                             </div>
                           )}
+                        </div>
 
-                          {/* Features */}
-                          <div className="space-y-2 mb-4">
-                            {["Affordable Pricing", "Quality Service"].map((feature, idx) => (
-                              <div key={idx} className="flex items-center gap-2">
-                                <CheckCircle className={`w-4 h-4 ${colors.text} flex-shrink-0`} />
-                                <span className="text-sm text-gray-700">{feature}</span>
-                              </div>
-                            ))}
+                        <div className="flex items-center gap-1 mb-4 text-xs text-gray-600">
+                          <Users className="w-3.5 h-3.5" />
+                          <span>
+                            {service.totalProviders} Provider
+                            {service.totalProviders > 1 ? "s" : ""} Available
+                          </span>
+                        </div>
+
+                        {service.availableIn?.length > 0 && (
+                          <div className="flex items-center gap-1 mb-4 text-xs text-gray-600">
+                            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span className="truncate">
+                              Available in {service.availableIn.slice(0, 2).join(", ")}
+                              {service.availableIn.length > 2 && ` +${service.availableIn.length - 2} more`}
+                            </span>
                           </div>
+                        )}
 
-                          {/* Pricing & Action */}
-                          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                            <div>
-                              <p className="text-xs text-gray-500 mb-1">Starting from</p>
-                              <p className={`text-2xl font-bold ${colors.text}`}>
-                                ₹{service.minPrice}
-                              </p>
+                        <div className="space-y-2 mb-4">
+                          {["Affordable Pricing", "Quality Service"].map((f, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                              <CheckCircle className={`w-4 h-4 ${unified.accentText}`} />
+                              <span className="text-sm text-gray-700">{f}</span>
                             </div>
-                            <button className={`px-4 py-2 ${colors.bg} ${colors.text} rounded-lg font-semibold text-sm ${colors.hover} transition-all flex items-center gap-2`}>
-                              <Calendar className="w-4 h-4" />
-                              View
-                            </button>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                          <div>
+                            <p className="text-xs text-gray-500 mb-1">Starting from</p>
+                            <p className={`text-2xl font-bold ${unified.accentText}`}>
+                              ₹{service.minPrice}
+                            </p>
                           </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                          <button
+                            className={`px-4 py-2 bg-gradient-to-r ${unified.buttonGradient} text-white rounded-lg font-semibold text-sm flex items-center gap-2`}
+                          >
+                            <Calendar className="w-4 h-4" />
+                            View
+                          </button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              </div>
+              </>
             )}
 
-            {/* All Services / Filtered by Price Range */}
+            {/* All / Filtered by Price Range */}
             {!loading && !error && viewMode !== "grouped" && getCurrentViewServices().length > 0 && (
-              <div>
+              <>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
                   {viewMode === "all" && `All Services Sorted by Price (${getCurrentViewServices().length})`}
                   {viewMode === "budget" && `Budget-Friendly Services (${getCurrentViewServices().length})`}
@@ -440,161 +376,144 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
                   {viewMode === "premium" && `Premium Services (${getCurrentViewServices().length})`}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {getCurrentViewServices().map((service, index) => {
-                    const color = getAffordabilityColor(service.affordability);
-                    const colors = colorClasses[color];
-                    return (
-                      <Card
-                        key={service.id}
-                        className={`border-2 ${colors.border} hover:shadow-xl transition-all cursor-pointer relative`}
-                        onClick={() => router.push(`/home-healthcare/${encodeURIComponent(service.serviceName)}/${service.hospital.id}`)}
+                  {getCurrentViewServices().map((service) => (
+                    <Card
+                      key={service.id}
+                      className="border border-gray-200 hover:shadow-xl transition-all cursor-pointer relative"
+                      onClick={() =>
+                        router.push(
+                          `/home-healthcare/${encodeURIComponent(service.serviceName)}/${service.hospital.id}`
+                        )
+                      }
+                    >
+                      {/* Discount Badge */}
+                      {service.hasDiscount && service.discountPercentage > 0 && (
+                        <div className="absolute top-3 right-3 z-10">
+                          {/* <Badge className="bg-red-500 text-white text-xs">
+                    
+                            {service.discountPercentage}
+                             <Percent className="w-3 h-3 mr-1" />
+                          </Badge> */}
+                        </div>
+                      )}
+
+                      {/* Card Header */}
+                      <div
+                        className={`bg-gradient-to-r ${unified.cardHeaderGradient} p-4 rounded-t-xl flex items-center gap-3`}
                       >
-                        <CardContent className="p-5">
-                          {/* Discount Badge */}
-                          {service.hasDiscount && service.discountPercentage > 0 && (
-                            <div className="absolute top-3 right-3">
-                              <Badge className="bg-red-500 text-white">
-                                <Percent className="w-3 h-3 mr-1" />
-                                {service.discountPercentage}% OFF
-                              </Badge>
-                            </div>
-                          )}
-
-                          {/* Hospital Logo & Name */}
-                          <div className="flex items-start gap-3 mb-4">
-                            {service.hospital.logo && (
-                              <div className="w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-200 flex-shrink-0">
-                                <Image
-                                  src={service.hospital.logo}
-                                  width={56}
-                                  height={56}
-                                  alt={service.hospital.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2">
-                                {service.hospital.name}
-                              </h3>
-                              <div className="flex flex-wrap gap-1">
-                                <Badge className={`${colors.bg} ${colors.text} text-xs`}>
-                                  {service.priceRange}
-                                </Badge>
-                                {service.totalBookings > 0 && (
-                                  <Badge className="bg-blue-100 text-blue-700 text-xs">
-                                    {service.totalBookings} bookings
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
+                        {service.hospital.logo ? (
+                          <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-300 flex-shrink-0">
+                            <Image
+                              src={service.hospital.logo}
+                              width={48}
+                              height={48}
+                              alt={service.hospital.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-
-                          {/* Service Name */}
-                          <div className={`${colors.bg} ${colors.text} p-3 rounded-lg mb-3`}>
-                            <p className="font-semibold text-sm">{service.serviceName}</p>
+                        ) : (
+                          <div className="p-2 bg-white/30 rounded-lg flex items-center justify-center w-12 h-12">
+                            <Shield className="w-5 h-5 text-[#1E3B90]" />
                           </div>
+                        )}
+                        <div className="flex-1">
+                          <h3 className="text-base font-bold text-gray-800 line-clamp-2">
+                            {service.hospital.name}
+                          </h3>
+                          <p className={`${unified.accentText} text-sm font-semibold`}>
+                            {service.serviceName}
+                          </p>
+                        </div>
+                        <Badge className="bg-white/30 text-[#1E3B90] text-xs">
+                          {service.priceRange}
+                        </Badge>
+                      </div>
 
-                          {/* Location */}
-                          <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                            <MapPin className="w-4 h-4 flex-shrink-0" />
-                            <span className="truncate">{service.hospital.city}, {service.hospital.state}</span>
+                      <CardContent className="p-5 bg-white rounded-b-xl">
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                          <MapPin className="w-4 h-4" />
+                          <span>{service.hospital.city}, {service.hospital.state}</span>
+                        </div>
+
+                        <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-gray-600">Starting Price:</span>
+                            <span className="font-bold text-gray-900">₹{service.minPrice}</span>
                           </div>
-
-                          {/* Pricing Details */}
-                          <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                          {service.maxPrice && (
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs text-gray-600">Starting Price:</span>
-                              <span className="font-bold text-gray-900">₹{service.minPrice}</span>
-                            </div>
-                            {service.maxPrice && (
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs text-gray-600">Max Price:</span>
-                                <span className="font-bold text-gray-900">₹{service.maxPrice}</span>
-                              </div>
-                            )}
-                            {service.finalprice && (
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-600">Final Price:</span>
-                                <span className="font-bold text-green-600">₹{service.finalprice}</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Experience Badge */}
-                          {service.hospital.experience && (
-                            <div className="flex items-center gap-2 mb-4 text-xs text-gray-600 bg-gray-50 p-2 rounded-lg">
-                              <Award className="w-4 h-4 text-green-600" />
-                              <span>{service.hospital.experience}+ years experience</span>
+                              <span className="text-xs text-gray-600">Max Price:</span>
+                              <span className="font-bold text-gray-900">₹{service.maxPrice}</span>
                             </div>
                           )}
+                          {service.finalprice && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600">Final Price:</span>
+                              <span className="font-bold text-green-600">₹{service.finalprice}</span>
+                            </div>
+                          )}
+                        </div>
 
-                          {/* Actions */}
-                          <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
-                            <button 
+                        {service.hospital.experience && (
+                          <div className="flex items-center gap-2 mb-4 text-xs text-gray-600 bg-gray-50 p-2 rounded-lg">
+                            <Award className="w-4 h-4 text-[#1E3B90]" />
+                            <span>{service.hospital.experience}+ years experience</span>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                          <div>
+                            <p className="text-xs text-gray-500 mb-1">Starting from</p>
+                            <p className={`text-xl font-bold ${unified.accentText}`}>
+                              ₹{service.minPrice}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                window.open(`tel:${service.hospital.mobile}`, '_self');
+                                window.open(`tel:${service.hospital.mobile}`, "_self");
                               }}
-                              className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-all"
+                              className="p-2 bg-[#EEF3FF] text-[#1E3B90] rounded-lg hover:bg-[#E1E8FF]"
                             >
                               <Phone className="w-4 h-4" />
                             </button>
-                            <button className={`flex-1 px-3 py-2 ${colors.bg} ${colors.text} rounded-lg font-semibold text-xs ${colors.hover} transition-all`}>
+                            <button
+                              className={`px-3 py-2 bg-gradient-to-r ${unified.buttonGradient} text-white rounded-lg font-semibold text-xs`}
+                            >
                               Book Now
                             </button>
-                            <div className="text-right">
-                              <p className={`text-xl font-bold ${colors.text}`}>
-                                ₹{service.minPrice}
-                              </p>
-                            </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              </div>
+              </>
             )}
 
             {/* Why Choose Affordable Services */}
             {!loading && !error && (
               <div className="mt-8">
-                <Card className="border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                <Card className="border border-gray-200 bg-gradient-to-r from-[#EEF3FF] to-[#E1E8FF]">
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <Wallet className="w-6 h-6 text-green-600" />
+                      <Wallet className="w-6 h-6 text-[#1E3B90]" />
                       Benefits of Our Affordable Healthcare Services
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       {[
-                        {
-                          icon: <TrendingDown className="w-5 h-5 text-green-600" />,
-                          title: "Competitive Pricing",
-                          desc: "Best rates in the market",
-                        },
-                        {
-                          icon: <Tag className="w-5 h-5 text-blue-600" />,
-                          title: "Discounts Available",
-                          desc: "Special offers and packages",
-                        },
-                        {
-                          icon: <Shield className="w-5 h-5 text-purple-600" />,
-                          title: "Quality Assured",
-                          desc: "No compromise on service quality",
-                        },
-                        {
-                          icon: <CheckCircle className="w-5 h-5 text-orange-600" />,
-                          title: "Transparent Pricing",
-                          desc: "No hidden charges",
-                        },
+                        { icon: <TrendingDown className="w-5 h-5" />, title: "Competitive Pricing", desc: "Best rates in the market" },
+                        { icon: <Tag className="w-5 h-5" />, title: "Discounts Available", desc: "Special offers and packages" },
+                        { icon: <Shield className="w-5 h-5" />, title: "Quality Assured", desc: "No compromise on service quality" },
+                        { icon: <CheckCircle className="w-5 h-5" />, title: "Transparent Pricing", desc: "No hidden charges" },
                       ].map((benefit, idx) => (
                         <div
                           key={idx}
                           className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
                         >
-                          <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3 border-2 border-gray-200">
-                            {benefit.icon}
+                          <div className="w-12 h-12 bg-[#EEF3FF] rounded-full flex items-center justify-center mb-3">
+                            <div className={unified.accentText}>{benefit.icon}</div>
                           </div>
                           <h4 className="font-bold text-gray-900 mb-1">{benefit.title}</h4>
                           <p className="text-sm text-gray-600">{benefit.desc}</p>
@@ -609,15 +528,15 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
             {/* Provider Info Section */}
             {!loading && !error && homeHealthcareService && (
               <div className="mt-6">
-                <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <Card className="border border-gray-200 bg-gradient-to-r from-[#EEF3FF] to-[#E1E8FF]">
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                       Current Service Provider Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Shield className="w-5 h-5 text-blue-600" />
+                        <div className="w-10 h-10 bg-[#EEF3FF] rounded-full flex items-center justify-center">
+                          <Shield className="w-5 h-5 text-[#1E3B90]" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Provider</p>
@@ -627,8 +546,8 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
-                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                          <IndianRupee className="w-5 h-5 text-green-600" />
+                        <div className="w-10 h-10 bg-[#EEF3FF] rounded-full flex items-center justify-center">
+                          <IndianRupee className="w-5 h-5 text-[#1E3B90]" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Starting Price</p>
@@ -638,8 +557,8 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
-                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                          <Phone className="w-5 h-5 text-purple-600" />
+                        <div className="w-10 h-10 bg-[#EEF3FF] rounded-full flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-[#1E3B90]" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Contact</p>
@@ -661,4 +580,3 @@ const PricingServicesList = ({ onClose, homeHealthcareService, serviceName }) =>
 };
 
 export default PricingServicesList;
-
