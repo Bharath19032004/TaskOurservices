@@ -31,11 +31,13 @@ import {
 } from "lucide-react";
 import { FaHospitalAlt } from "react-icons/fa";
 import ReviewsDialog from "./reviews-dialog";
+import CoverageList from "./CoverageList";
 
 const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) => {
   console.log("🚀 ~ Insurance Data:", insurance)
   
   const [activeTab, setActiveTab] = useState('overview');
+  const [showCoverage, setShowCoverage] = useState(false);
 
   // Get reviews from insurance data
   const reviews = insurance?.reviews || [];
@@ -665,7 +667,7 @@ const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) 
                  <div className="p-4 sm:p-6 bg-gray-50">
                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
                      {[
-                       { icon: <Shield className="w-5 h-5 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes" },
+                       { icon: <Shield className="w-5 h-5 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes", clickable: true, action: "coverage" },
                        { icon: <DollarSign className="w-5 h-5 text-green-600" />, label: "Cashless", value: "Available" },
                        { icon: <Building2 className="w-5 h-5 text-purple-600" />, label: "Network", value: "Pan India" },
                        { icon: <Heart className="w-5 h-5 text-red-600" />, label: "Health Check", value: "Free" },
@@ -680,7 +682,14 @@ const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) 
                      ].map((item, idx) => (
                        <div
                          key={idx}
-                         className="bg-white p-2 sm:p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center min-h-[85px] sm:min-h-[95px]"
+                         onClick={() => {
+                           if (item.clickable && item.action === "coverage") {
+                             setShowCoverage(true);
+                           }
+                         }}
+                         className={`bg-white p-2 sm:p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center min-h-[85px] sm:min-h-[95px] ${
+                           item.clickable ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50' : ''
+                         }`}
                        >
                          <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-50 mb-1.5 sm:mb-2">
                            {item.icon}
@@ -1167,7 +1176,7 @@ const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) 
               <div className="p-3">
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { icon: <Shield className="w-4 h-4 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes" },
+                    { icon: <Shield className="w-4 h-4 text-blue-600" />, label: "Coverage", value: insurance?.coverage ? "Available" : "Yes", clickable: true, action: "coverage" },
                     { icon: <DollarSign className="w-4 h-4 text-green-600" />, label: "Cashless", value: "Available" },
                     { icon: <Building2 className="w-4 h-4 text-purple-600" />, label: "Network", value: "Pan India" },
                     { icon: <Heart className="w-4 h-4 text-red-600" />, label: "Health Check", value: "Free" },
@@ -1182,7 +1191,14 @@ const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) 
                   ].map((item, idx) => (
                     <div
                       key={idx}
-                      className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm text-center flex flex-col items-center justify-center min-h-[75px]"
+                      onClick={() => {
+                        if (item.clickable && item.action === "coverage") {
+                          setShowCoverage(true);
+                        }
+                      }}
+                      className={`bg-white p-2 rounded-lg border border-gray-200 shadow-sm text-center flex flex-col items-center justify-center min-h-[75px] ${
+                        item.clickable ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50 active:bg-blue-100' : ''
+                      }`}
                     >
                       <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gray-50 mb-1">
                         {item.icon}
@@ -1226,6 +1242,15 @@ const HealthInsuranceSingleViewClient = ({ insurance, category, loggeduserId }) 
           </Card>
         </div>
       </div>
+
+      {/* Coverage List Modal */}
+      {showCoverage && (
+        <CoverageList
+          onClose={() => setShowCoverage(false)}
+          insuranceService={insurance}
+          serviceName={insurance?.companyName}
+        />
+      )}
     </div>
   );
 };
