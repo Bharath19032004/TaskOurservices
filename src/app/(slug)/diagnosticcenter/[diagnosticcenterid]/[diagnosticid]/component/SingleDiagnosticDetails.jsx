@@ -859,20 +859,20 @@ const DiagnosticCenterSingleView = ({ diagnosticcenterdata, diagnosticCenter, pa
                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
                      {[
                        { icon: <TestTube className="w-5 h-5 text-blue-600" />, label: "Diagnostic Tests", value: diagnosticcenterdata?.diagnosticServices?.length || "50+", clickable: true },
-                       { icon: <Award className="w-5 h-5 text-green-600" />, label: "NABL Certified", value: "Certified", clickable: true },
-                       { icon: <Clock className="w-5 h-5 text-orange-600" />, label: "Service Hours", value: "24/7", clickable: true },
+                       { icon: <Award className="w-5 h-5 text-green-600" />, label: "NABL Certified", value: "Certified"},
+                       { icon: <Clock className="w-5 h-5 text-orange-600" />, label: "Service Hours", value: "24/7" },
                        { icon: <Shield className="w-5 h-5 text-indigo-600" />, label: "Diagnostic Services", value: "Advanced", clickable: true },
                       { icon: <Building2 className="w-5 h-5 text-purple-600" />, label: "Govt Schemes", value: "Available", clickable: true },
                       { icon: <Stethoscope className="w-5 h-5 text-red-600" />, label: "Pathology", value: "NABL", clickable: true },
-                      { icon: <Video className="w-5 h-5 text-blue-600" />, label: "Online Consultation", value: "Available", clickable: true },
-                      { icon: <Users className="w-5 h-5 text-cyan-600" />, label: "Experience", value: diagnosticcenterdata?.hspInfo?.experience ? `${diagnosticcenterdata.hspInfo.experience}+ Years` : "10+", clickable: true },
-                      { icon: <CreditCard className="w-5 h-5 text-orange-600" />, label: "Cashless Services", value: "Available", clickable: true },
+                      { icon: <Video className="w-5 h-5 text-blue-600" />, label: "Online Consultation", value: "Available"},
+                      { icon: <Users className="w-5 h-5 text-cyan-600" />, label: "Experience", value: diagnosticcenterdata?.hspInfo?.experience ? `${diagnosticcenterdata.hspInfo.experience}+ Years` : "10+" },
+                      { icon: <CreditCard className="w-5 h-5 text-orange-600" />, label: "Cashless Services", value: "Available"},
                       { icon: <User className="w-5 h-5 text-emerald-600" />, label: "Home Collection", value: "Available" },
                       ...(diagnosticcenterdata?.hspdetails?.nabhnablapproved === "Yes"
                         ? [{ icon: <Award className="w-5 h-5 text-green-600" />, label: "NABL Accredited", value: diagnosticcenterdata.hspdetails.nabhnabllevel }]
                         : []),
-                      { icon: <Building2 className="w-5 h-5 text-amber-600" />, label: "Inhouse Canteen", value: "Available", clickable: true },
-                       { icon: <Star className="w-5 h-5 text-yellow-600" />, label: "Reviews", value: `${avgRating} ★`, clickable: true },
+                      { icon: <Building2 className="w-5 h-5 text-amber-600" />, label: "Inhouse Canteen", value: "Available" },
+                       { icon: <Star className="w-5 h-5 text-yellow-600" />, label: "Reviews", value: `${avgRating} ★` },
                      ].map((item, idx) => (
                        <div
                          key={idx}
