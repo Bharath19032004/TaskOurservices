@@ -1,71 +1,68 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Icons from "@/lib/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Heart,
   Search,
   X,
   Loader2,
+  Ambulance,
   CheckCircle,
+  ShieldCheck,
+  Activity,
 } from "lucide-react";
 
-const HospitalSpecialtiesList = ({ hospitalId, onClose }) => {
-  const [specialties, setSpecialties] = useState([]);
-  const [filteredSpecialties, setFilteredSpecialties] = useState([]);
+const HospitalAmbulanceList = ({ hospitalId, onClose }) => {
+  const [ambulances, setAmbulances] = useState([]);
+  const [filteredAmbulances, setFilteredAmbulances] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchHospitalSpecialties();
+    fetchHospitalAmbulances();
   }, [hospitalId]);
 
   useEffect(() => {
-    filterSpecialties();
-  }, [searchTerm, specialties]);
+    filterAmbulances();
+  }, [searchTerm, ambulances]);
 
-  const fetchHospitalSpecialties = async () => {
+  const fetchHospitalAmbulances = async () => {
     try {
       setLoading(true);
-      console.log(`🔍 Fetching specialties for hospital: ${hospitalId}`);
-      const response = await fetch(`/api/hospital/${hospitalId}/specialties`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch specialties");
-      }
+      const response = await fetch(`/api/hospital/${hospitalId}/ambulances`);
+      if (!response.ok) throw new Error("Failed to fetch ambulances");
+
       const data = await response.json();
-      console.log(
-        `✅ Received ${data.specialties?.length || 0} specialties for this hospital`
-      );
-      setSpecialties(data.specialties || []);
-      setFilteredSpecialties(data.specialties || []);
+      setAmbulances(data.ambulances || []);
+      setFilteredAmbulances(data.ambulances || []);
     } catch (err) {
-      console.error("❌ Error fetching specialties:", err);
+      console.error("❌ Error fetching ambulances:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const filterSpecialties = () => {
-    let filtered = specialties;
+  const filterAmbulances = () => {
+    let filtered = ambulances;
+
     if (searchTerm) {
-      filtered = filtered.filter((spec) => {
-        const title = spec.speciality?.title?.toLowerCase() || "";
-        const description = spec.speciality?.description?.toLowerCase() || "";
+      filtered = filtered.filter((amb) => {
+        const model = amb.model?.toLowerCase() || "";
+        const type = amb.type?.toLowerCase() || "";
+        const number = amb.number?.toLowerCase() || "";
         return (
-          title.includes(searchTerm.toLowerCase()) ||
-          description.includes(searchTerm.toLowerCase())
+          model.includes(searchTerm.toLowerCase()) ||
+          type.includes(searchTerm.toLowerCase()) ||
+          number.includes(searchTerm.toLowerCase())
         );
       });
     }
-    setFilteredSpecialties(filtered);
-  };
 
-  const iconsArray = Object.values(Icons);
+    setFilteredAmbulances(filtered);
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm lg:bg-white lg:backdrop-blur-0 lg:p-0 p-4 flex items-center lg:block justify-center">
@@ -74,17 +71,17 @@ const HospitalSpecialtiesList = ({ hospitalId, onClose }) => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+                <Ambulance className="w-6 h-6 text-white" />
               </div>
               <div>
                 <CardTitle className="text-2xl lg:text-3xl font-bold">
-                  Our Medical Specialties
+                  Hospital Ambulances
                 </CardTitle>
                 <p className="text-sm text-blue-100 flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
                   <span>
-                    {filteredSpecialties.length} specialt
-                    {filteredSpecialties.length !== 1 ? "ies" : "y"} available
+                    {filteredAmbulances.length} ambulanc
+                    {filteredAmbulances.length !== 1 ? "es" : "e"} available
                   </span>
                 </p>
               </div>
@@ -102,13 +99,13 @@ const HospitalSpecialtiesList = ({ hospitalId, onClose }) => {
 
         <CardContent className="p-6 lg:px-8 lg:py-8 overflow-y-auto lg:overflow-visible max-h-[calc(95vh-100px)] lg:max-h-none bg-gradient-to-b from-gray-50 to-white">
           <div className="max-w-7xl mx-auto">
-            {/* 🔍 Search Section */}
+            {/* Search Section */}
             <div className="mb-8">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
                   type="text"
-                  placeholder="Search by specialty name or description..."
+                  placeholder="Search by model, type, or number..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-12 pr-4 h-12 text-base border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-2xl bg-white shadow-sm transition-all"
@@ -116,12 +113,12 @@ const HospitalSpecialtiesList = ({ hospitalId, onClose }) => {
               </div>
             </div>
 
-            {/* 🏥 Specialties Grid */}
+            {/* Ambulance Grid */}
             {loading ? (
               <div className="text-center py-16">
                 <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  Loading Specialties
+                  Loading Ambulances
                 </h3>
                 <p className="text-gray-600">Please wait...</p>
               </div>
@@ -131,30 +128,30 @@ const HospitalSpecialtiesList = ({ hospitalId, onClose }) => {
                   <X className="w-8 h-8 text-red-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-2">
-                  Error Loading Specialties
+                  Error Loading Ambulances
                 </h3>
                 <p className="text-red-600 mb-6">{error}</p>
                 <Button
-                  onClick={fetchHospitalSpecialties}
+                  onClick={fetchHospitalAmbulances}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   Try Again
                 </Button>
               </div>
-            ) : filteredSpecialties.length === 0 ? (
+            ) : filteredAmbulances.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-12 h-12 text-gray-400" />
+                  <Ambulance className="w-12 h-12 text-gray-400" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-700 mb-2">
                   {searchTerm
-                    ? "No Specialties Found"
-                    : "No Specialties Registered"}
+                    ? "No Ambulances Found"
+                    : "No Ambulances Registered"}
                 </h3>
                 <p className="text-gray-500 mb-6">
                   {searchTerm
                     ? "Try adjusting your search criteria"
-                    : "This hospital has not registered any specialties yet"}
+                    : "This hospital has not registered any ambulances yet"}
                 </p>
                 {searchTerm && (
                   <Button
@@ -167,34 +164,45 @@ const HospitalSpecialtiesList = ({ hospitalId, onClose }) => {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 justify-center">
-                {filteredSpecialties.map((spec, index) => {
-                  const icon = iconsArray[index % iconsArray.length]; // cycle icons
-                  return (
-                    <div
-                      key={spec.id || index}
-                      className="flex flex-col text-center items-center justify-center mb-4 bg-gray-50 rounded-2xl border hover:shadow-lg hover:scale-[1.03] transition-all cursor-pointer p-4"
-                    >
-                      <span className="xl:h-24 xl:w-24 md:h-16 md:w-16 mb-3">
-                        <Image
-                          src={icon.src}
-                          width={200}
-                          height={200}
-                          alt={icon.title || spec.speciality?.title || "Specialty"}
-                          className="rounded-xl object-contain"
-                        />
-                      </span>
-                      <p className="text-[#5271FF] font-poppins text-[14px] font-bold mb-2">
-                        {spec.speciality?.title || icon.title || "Specialty"}
-                      </p>
-                      {spec.doctorCount !== undefined && (
-                        <p className="text-[12px] text-gray-600 font-medium">
-                          {spec.doctorCount} Doctor
-                          {spec.doctorCount !== 1 ? "s" : ""}
-                        </p>
-                      )}
+                {filteredAmbulances.map((amb) => (
+                  <div
+                    key={amb.id}
+                    className="flex flex-col text-center items-center justify-center mb-4 bg-gray-50 rounded-2xl border hover:shadow-md transition-all hover:scale-[1.03] cursor-pointer p-4"
+                  >
+                    <div className="h-20 w-20 rounded-2xl bg-blue-100 flex items-center justify-center mb-3">
+                      <Ambulance className="w-8 h-8 text-blue-600" />
                     </div>
-                  );
-                })}
+                    <p className="text-[#5271FF] font-bold text-[14px] mb-1">
+                      {amb.model}
+                    </p>
+                    <p className="text-[12px] text-gray-600 font-medium">
+                      {amb.type}
+                    </p>
+                    <p className="text-[12px] text-gray-500">{amb.number}</p>
+                    <div className="flex items-center justify-center gap-2 mt-2 text-xs">
+                      <ShieldCheck
+                        className={`w-4 h-4 ${
+                          amb.status === "APPROVED"
+                            ? "text-green-600"
+                            : amb.status === "REJECTED"
+                            ? "text-red-600"
+                            : "text-yellow-500"
+                        }`}
+                      />
+                      <span
+                        className={`font-semibold ${
+                          amb.status === "APPROVED"
+                            ? "text-green-600"
+                            : amb.status === "REJECTED"
+                            ? "text-red-600"
+                            : "text-yellow-600"
+                        }`}
+                      >
+                        {amb.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -204,4 +212,4 @@ const HospitalSpecialtiesList = ({ hospitalId, onClose }) => {
   );
 };
 
-export default HospitalSpecialtiesList;
+export default HospitalAmbulanceList;

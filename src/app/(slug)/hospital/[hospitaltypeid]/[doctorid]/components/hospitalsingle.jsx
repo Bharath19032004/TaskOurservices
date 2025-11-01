@@ -771,7 +771,7 @@ const HospitalSingleView = ({ hospitalData, patientId }) => {
                      {[
                                { icon: <Users className="w-5 h-5 text-blue-600" />, label: "Doctors", value: hospitalData?.hspInfo?.totaldoctor || "250+", clickable: true, action: "doctors" },
                                  { icon: <Heart className="w-5 h-5 text-red-600" />, label: "Speciality", value: hospitalData?.hspInfo?.totalspeciality || "35+", clickable: true, action: "specialties" },
-                                 { icon: <FaAmbulance className="w-5 h-5 text-orange-600" />, label: "Ambulance", value: "24/7", clickable: true, action: "ambulances" },
+                                 { icon: <FaAmbulance className="w-5 h-5 text-orange-600" />, label: "Ambulance", value: "24/7", action: "ambulances" },
                                  { icon: <Bed className="w-5 h-5 text-green-600" />, label: "Hospital Beds", value: hospitalData?.hspInfo?.totalnoofbed || "100+" },
                                  { icon: <Building2 className="w-5 h-5 text-purple-600" />, label: "Govt Schemes", value: "Available", clickable: true, action: "govtSchemes" },
                                  { icon: <TestTube className="w-5 h-5 text-red-600" />, label: "Surgery Packages", value: "Available" },
@@ -780,11 +780,11 @@ const HospitalSingleView = ({ hospitalData, patientId }) => {
                                  { icon: <Building2 className="w-5 h-5 text-cyan-600" />, label: "Hospital Branches", value: hospitalData?.hspbranches?.length || "1+", clickable: true, action: "branches" },
                                  { icon: <TestTube className="w-5 h-5 text-pink-600" />, label: "Pharmacy", value: "24/7" },
                                  { icon: <TestTube className="w-5 h-5 text-teal-600" />, label: "NABL Pathology", value: "Certified" },
-                                 { icon: <Heart className="w-5 h-5 text-green-600" />, label: "Wellness Packages", value: "Available", clickable: true, action: "wellness" },
+                                 { icon: <Heart className="w-5 h-5 text-green-600" />, label: "Wellness Packages", value: "Available", action: "wellness" },
                                  { icon: <Video className="w-5 h-5 text-blue-600" />, label: "Online Consultation", value: "Available" },
                                  { icon: <Shield className="w-5 h-5 text-yellow-600" />, label: "Diagnostic Services", value: "Advanced" },
                                  { icon: <CreditCard className="w-5 h-5 text-orange-600" />, label: "Cashless Services", value: "Available" },
-                                 { icon: <User className="w-5 h-5 text-emerald-600" />, label: "Home Healthcare", value: "Available", clickable: true, action: "homeHealthcare" },
+                                 { icon: <User className="w-5 h-5 text-emerald-600" />, label: "Home Healthcare", value: "Available", action: "homeHealthcare" },
                                  ...(hospitalData?.hspdetails?.nabhnablapproved === "Yes"
                                    ? [{ icon: <Award className="w-5 h-5 text-green-600" />, label: "NABH Accredited", value: hospitalData.hspdetails.nabhnabllevel }]
                                    : []),
@@ -799,8 +799,8 @@ const HospitalSingleView = ({ hospitalData, patientId }) => {
                            else if (item.action === "specialties") setShowSpecialtiesList(true);
                            else if (item.action === "branches") setShowBranchesList(true);
                            else if (item.action === "govtSchemes") setGovtSchemesDialogOpen(true);
-                           else if (item.action === "ambulances") setShowAmbulances(true);
-                           else if (item.action === "wellness") setShowWellnessPackages(true);
+                           //else if (item.action === "ambulances") setShowAmbulances(true);
+                           //else if (item.action === "wellness") setShowWellnessPackages(true);
                            else if (item.action === "homeHealthcare") setShowHomeHealthcare(true);
                          } : undefined}
                          className={`bg-white p-2 sm:p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center min-h-[85px] sm:min-h-[95px] ${
